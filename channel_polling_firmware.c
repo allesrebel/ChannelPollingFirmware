@@ -10,7 +10,8 @@
  *
  * Initial Revision 4/23/2015 by Alles Rebel (Team RTMS)
  * 	4/21/15 - Added in Stablizing Delays (AR)
- * 	5/12/14 - Changed from 8:1 muxes to 16:1 muxes (AR)
+ * 	5/12/15 - Changed from 8:1 muxes to 16:1 muxes (AR)
+ * 	5/18/15	- Fixed Issue with ISR (AR)
  */
 
 
@@ -121,7 +122,21 @@ int main(void) {
 	P2DIR |= 0xFF;	// Set to all outputs
 
 	while (1) {
-		;
+		if(P1OUT & BIT6){
+			// Send the Information to Computer
+			sprintf(test,"Ch %d, ADC Val: %d\n", chNumber, ADC10MEM);
+			uartSendStr(test);
+
+			// Prep the Data for the Next Sample
+			nextCh();
+			__delay_cycles(6790000); // Wait for the cap on the RMS chip to charge
+			adcStart();				// Take the Sample
+			__delay_cycles(1000);	// Wait for ADC To Grab the data + send to PC
+		}
+		else{
+			//	Error Occured: Shouldn't ever get here...
+			uartSend("Error!\n");
+		}
 	}
 }
 
@@ -174,16 +189,6 @@ __interrupt void UARTRx_ISR(void) {
 __interrupt void ADC10_ISR(void) {
 	ADC10CTL0 &= ~ADC10IFG;  // clear interrupt flag
 	P1OUT &= ~BIT6;	// Indicate Completion of a Sample
-
-	// Send the Information to Computer
-	sprintf(test,"Ch %d, ADC Val: %d\n", chNumber, ADC10MEM);
-	uartSendStr(test);
-
-	// Prep the Data for the Next Sample
-	nextCh();
-	__delay_cycles(6790000); // Wait for the cap on the RMS chip to charge
-	adcStart();				// Take the Sample
-	__delay_cycles(1000);	// Wait for ADC To Grab the data + send to PC
 }
 
 void setupClock() {

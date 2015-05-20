@@ -122,7 +122,7 @@ int main(void) {
 	P2DIR |= 0xFF;	// Set to all outputs
 
 	while (1) {
-		if(P1OUT & BIT6){
+		if(!(P1OUT & BIT6)){
 			// Send the Information to Computer
 			sprintf(test,"Ch %d, ADC Val: %d\n", chNumber, ADC10MEM);
 			uartSendStr(test);
@@ -135,7 +135,7 @@ int main(void) {
 		}
 		else{
 			//	Error Occured: Shouldn't ever get here...
-			uartSend("Error!\n");
+			uartSendStr("Error!\n");
 		}
 	}
 }

@@ -124,7 +124,7 @@ int main(void) {
 	while (1) {
 		if(!(P1OUT & BIT6)){
 			// Send the Information to Computer
-			sprintf(test,"Ch %d, ADC Val: %d\n", chNumber, ADC10MEM);
+			sprintf(test,"Ch %d ADC Val: %d\n", chNumber, ADC10MEM);
 			uartSendStr(test);
 
 			// Prep the Data for the Next Sample

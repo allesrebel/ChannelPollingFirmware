@@ -75,7 +75,7 @@ void adcStart();
 /*
  * Global Variables & functions
  */
-#define TOTALCHANNELS 32
+#define TOTALCHANNELS 27
 unsigned int chNumber = 0;
 void initCh();
 void nextCh();
